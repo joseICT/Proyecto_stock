@@ -14,3 +14,10 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
+//crear las dos rutas del proyecto
+Route::get('/stockctirico','StockCriticoController@list');
+Route::get('/stocknecesario','StockNecesarioController@list');
