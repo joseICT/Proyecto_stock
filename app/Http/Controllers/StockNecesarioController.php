@@ -13,9 +13,9 @@ class StockNecesarioController extends Controller
         $this->middleware('auth');
     }
     //la funcion para listar todos los datos necesarios de la vista de base de datos
-    public function list(){
-        //$users=DB::table('users')->get();
-        //return view('crud.lista',compact('users'));
+    public function list(){        
+        $data=DB::table('productos_porcentaje')->get();
+        return view('StockNecesario',compact('data'));
 
     }
 }

@@ -20,6 +20,8 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
 <body>
+    <!-- llamar al estilo en css -->
+    @yield('css')
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
@@ -75,5 +77,7 @@
             @yield('content')
         </main>
     </div>
+    <!-- llamar al estilo js -->
+    @yield('js')
 </body>
 </html>
