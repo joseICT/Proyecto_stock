@@ -1,5 +1,7 @@
 <!--Agregar la dataTable e insertar los datos de una vista creada para mostrar productos vendidos a lo largo del año actual
-y mostar porcentaje de ventas de cada produto  -->
+y mostar porcentaje de ventas de cada produto  
+Posbles datos a usar una vez conversado los requerimientos 
+CODIGO - DESCIPCION - VENTAS ACTUALES - VENTAS_MES_Y_AÑO_PASADO - STOCK_ACTUAL - STOCK_RECOMENDABLE - AVISO DE REABASTECIMINETO DEL MES-->
 @extends('layouts.app')
 
 @section('css')
@@ -17,17 +19,24 @@ y mostar porcentaje de ventas de cada produto  -->
             <tr>
                 <th>Codigo</th> 
                 <th>Detalle</th> 
-                <th>Cantidad</th> 
-                <th>Porcentaje</th>              
+                <th>Stock en bodega</th> 
+                <th>Ventas del mes</th>
+                <th>Mes</th>
+                <th>Año</th>
+                <th>Historial</th>         
             </tr>
         </thead>
     <tbody>
-    @foreach($data as $lista)
+    @foreach($datos as $lista)
     <tr>
-        <td>{{$lista->DECODI}}</td>
+        <td>{{$lista->Codigo}}</td>
         <td>{{$lista->Detalle}}</td>
-        <td>{{$lista->TOTAL}}</td>
-        <td>{{$lista->porcentje}}%</td>
+        <td>{{$lista->Bodega}}</td>
+        <td>{{$lista->Ventas_del_mes}}</td>
+        <td>{{$lista->Mes}}</td>
+        <td>{{$lista->Año}}</td>
+        <td><a href="/{{$lista->Codigo}}" data-toogle="modal" data-target="#VistaModal" class="btn btn-success btn-block checkout-btn">Consultar</a>
+        </td>
     </tr>
     @endforeach
     </tbody>
