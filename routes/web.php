@@ -20,4 +20,4 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 //crear las dos rutas del proyecto
 Route::get('/stocknecesario','StockNecesarioController@list');
-Route::get('/stocknecesario/{{id}}','StockNecesarioController@Search_ID');
+Route::get('/stocknecesario/{id}','StockNecesarioController@Search_ID');

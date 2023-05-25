@@ -15,31 +15,36 @@ CODIGO - DESCIPCION - VENTAS ACTUALES - VENTAS_MES_Y_AÑO_PASADO - STOCK_ACTUAL 
     <div class="card-body">
 
 <table id="StockNecesario" class="table table-striped table-bordered" style="width:100%">
+<!-- SE agrego la media de ventas para mostrar solo los productos que en bodega sean menores a la media de venta  -->
         <thead>
             <tr>
                 <th>Codigo</th> 
-                <th>Detalle</th> 
+                <th>Detalle</th>
+                <th>Fecha</th>
                 <th>Stock en bodega</th> 
                 <th>Ventas del mes</th>
-                <th>Mes</th>
-                <th>Año</th>
+                <th>Media de ventas</th>                
                 <th>Historial</th>         
             </tr>
         </thead>
     <tbody>
-    @foreach($datos as $lista)
+    @foreach($datos as $lista )
+    @if($lista->Media_de_ventas > $lista->Bodega)
     <tr>
         <td>{{$lista->Codigo}}</td>
         <td>{{$lista->Detalle}}</td>
+        <td>{{$lista->Mes}} del {{$lista->Año}}</td>
         <td>{{$lista->Bodega}}</td>
         <td>{{$lista->Ventas_del_mes}}</td>
-        <td>{{$lista->Mes}}</td>
-        <td>{{$lista->Año}}</td>
-        <td><a href="/{{$lista->Codigo}}" data-toogle="modal" data-target="#VistaModal" class="btn btn-success btn-block checkout-btn">Consultar</a>
+        <td>{{$lista->Media_de_ventas}}</td>       
+        <td><a data-toogle="modal" data-target="#VistaModal" class="btn btn-success btn-block checkout-btn">Consultar</a>
         </td>
     </tr>
+    @endif
+    <!--@yield('ModalHistorial')-->
     @endforeach
     </tbody>
+
 </table>
 </div>
 </div>
