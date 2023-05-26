@@ -1,7 +1,6 @@
-<!--Agregar la dataTable e insertar los datos de una vista creada para mostrar productos vendidos a lo largo del año actual
-y mostar porcentaje de ventas de cada produto  
-Posbles datos a usar una vez conversado los requerimientos 
-CODIGO - DESCIPCION - VENTAS ACTUALES - VENTAS_MES_Y_AÑO_PASADO - STOCK_ACTUAL - STOCK_RECOMENDABLE - AVISO DE REABASTECIMINETO DEL MES-->
+<!-- Vista que devuelve los productos que ya no se en cuentran en inventario, esto fue credo debido a como se comporta la tabla
+de inventario con los productos que llegan a 0, son borrados de la misma tabla  -->
+
 @extends('layouts.app')
 
 @section('css')
@@ -14,34 +13,26 @@ CODIGO - DESCIPCION - VENTAS ACTUALES - VENTAS_MES_Y_AÑO_PASADO - STOCK_ACTUAL 
 <div class="container mt-5">
     <div class="card-body">
 
-<table id="StockNecesario" class="table table-striped table-bordered" style="width:100%">
-<!-- SE agrego la media de ventas para mostrar solo los productos que en bodega sean menores a la media de venta  -->
+<table id="StockPerdido" class="table table-striped table-bordered" style="width:100%">
         <thead>
             <tr>
                 <th>Codigo</th> 
                 <th>Detalle</th>
-                <th>Fecha</th>
-                <th>Stock en bodega</th> 
-                <th>Ventas del mes</th>
-                <th>Media de ventas</th>                
-                <th>Historial</th>         
+                <th>Mes</th>
+                <th>ventas del mes</th>       
             </tr>
         </thead>
     <tbody>
     @foreach($datos as $lista )
-    @if($lista->Media_de_ventas > $lista->Bodega)
     <tr>
         <td>{{$lista->Codigo}}</td>
-        <td>{{$lista->Detalle}}</td>
-        <td>{{$lista->Mes}} del {{$lista->Año}}</td>
-        <td>{{$lista->Bodega}}</td>
+        <td>{{$lista->Descripcion}}</td>
+        <td>{{ date("F", mktime(0, 0, 0, $lista->Mes, 1)) }}</td>
         <td>{{$lista->Ventas_del_mes}}</td>
-        <td>{{$lista->Media_de_ventas}}</td>       
-        <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="exampleModal">  Consulta</button></td>
     </tr>
-    @endif
     @endforeach
-    </tbody>   
+    </tbody>
+
 </table>
 </div>
 </div>
@@ -65,7 +56,7 @@ CODIGO - DESCIPCION - VENTAS ACTUALES - VENTAS_MES_Y_AÑO_PASADO - STOCK_ACTUAL 
 // ejecutar un scrip que agrega distintas herramientas a la tabla de datos  
     $(document).ready(function () {
     $.noConflict();
-    $('#StockNecesario').DataTable({
+    $('#StockPerdido').DataTable({
         dom: 'Bfrtip',
         buttons: [
             'excel', 'pdf'

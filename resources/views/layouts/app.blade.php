@@ -32,7 +32,7 @@
                     <ul class="navbar-nav mr-auto">
                         @auth
                         <!--link que solo se muestran al loguearse  -->
-                        <a class="navbar-brand" href="{{url('/stockcritico')}}">Stock desaparecido</a>
+                        <a class="navbar-brand" href="{{url('/stockperdido')}}">Stock desaparecido</a>
                         <a class="navbar-brand" href="{{url('/stocknecesario')}}">Stock necesario</a>
                         @endauth
                     </ul>
