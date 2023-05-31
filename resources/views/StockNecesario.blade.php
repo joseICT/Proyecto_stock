@@ -10,35 +10,42 @@ CODIGO - DESCIPCION - VENTAS ACTUALES - VENTAS_MES_Y_AÑO_PASADO - STOCK_ACTUAL 
 @endsection
 
 @section('content')
-
+<?php $variable=0?>
 <div class="container mt-5">
     <div class="card-body">
 
 <table id="StockNecesario" class="table table-striped table-bordered" style="width:100%">
 <!-- SE agrego la media de ventas para mostrar solo los productos que en bodega sean menores a la media de venta  -->
+<!-- Se relizaron cambios de texto y posicion solamente -->
         <thead>
             <tr>
                 <th>Codigo</th> 
-                <th>Detalle</th>
-                <th>Fecha</th>
-                <th>Stock en bodega</th> 
-                <th>Ventas del mes</th>
-                <th>Media de ventas</th>                
-                <th>Historial</th>         
+                <th>Nombre del producto</th>
+                <th>ultima fecha de venta registrada</th>
+                <th>Ventas totales de ese mes</th>
+                <th>Media de ventas de ese año</th>
+                <th>Stock actual en bodega</th>                                                       
             </tr>
         </thead>
     <tbody>
+<!-- el mayor cambio es aqui al revisar los datos de la vista anterior se observo que habian datos perdidos por lo que se uso otra vista y se agrgaron mas filtros para
+poder mostrar solo los datos del ultimo registro de ventas del mes de cada producto que aun tenga stock en bodega y este debajo de la media de ventas del año del 
+ultimo registro de ventas-->
     @foreach($datos as $lista )
-    @if($lista->Media_de_ventas > $lista->Bodega)
+    @if($lista->Codigo != $variable)
+    @if($lista->Media_de_ventas >= $lista->Bodega) 
     <tr>
         <td>{{$lista->Codigo}}</td>
         <td>{{$lista->Detalle}}</td>
-        <td>{{$lista->Mes}} del {{$lista->Año}}</td>
-        <td>{{$lista->Bodega}}</td>
+        <td>{{$lista->fecha}}</td>
         <td>{{$lista->Ventas_del_mes}}</td>
-        <td>{{$lista->Media_de_ventas}}</td>       
-        <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="exampleModal">  Consulta</button></td>
+        <td>{{$lista->Media_de_ventas}}</td>
+        <td>{{$lista->Bodega}}</td>                      
     </tr>
+    <?php $variable=$lista->Codigo ?>
+    @else
+    <?php $variable=$lista->Codigo ?>
+    @endif
     @endif
     @endforeach
     </tbody>   

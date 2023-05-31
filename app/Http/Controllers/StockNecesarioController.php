@@ -15,9 +15,9 @@ class StockNecesarioController extends Controller
     }
     //Se lista toda la vista completa en los que sus meses y años sea igual al actual
     //actualizacion se modifico la vista y ahora entrega la media de ventas del año por producto
+    //Se creo otra vista para evitar borrar la anterior
     public function list(){
-        $datos=DB::table('Stock_critico')
-        ->where([['Año','=', date('Y')],['Mes','=',date('m')],])
+        $datos=DB::table('Stock_critico_2')  
         ->get();
         return view('StockNecesario',compact('datos'));
     }
