@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -28,5 +29,30 @@ class StockNecesarioController extends Controller
         //$registro=DB::table('Stock_critico')->where('Codigo','=',$id)->get();
         //return redirect('StockNecesario')->with(compact('registro'));
         //return Redirect::back()->with('',compact('datos'));
+    }
+
+    public function HistorialRegistro($id){
+        $Consulta=DB::select(' SELECT 
+        `dcargos`.`DECODI` AS `Codigo`,
+        `producto`.`ARDESC` AS `Detalle`,
+        `suma_bodega`.`cantidad` as `Bodega`,
+        ceiling((SUM(`dcargos`.`DECANT`))/3) AS `Ventas_del_mes`,
+        DATE_ADD(DATE_ADD(MAKEDATE(year(`dcargos`.`DEFECO`), 1), INTERVAL (month(`dcargos`.`DEFECO`))-1 MONTH), INTERVAL 0 DAY) AS `fecha`,
+        MAX(media_productos.Media_de_ventas) AS Media_de_ventas
+    FROM
+        (((dcargos
+        JOIN suma_bodega)
+        JOIN producto)
+        LEFT JOIN media_productos ON dcargos.DECODI = media_productos.Codigo)
+
+    WHERE
+        ((dcargos.DEFECO BETWEEN ((CURDATE() + INTERVAL (-(DAYOFMONTH(CURDATE())) + 1) DAY) - INTERVAL 23 MONTH) AND CURDATE())
+            AND (dcargos.DECODI = suma_bodega.inarti)
+            AND (dcargos.DECODI = producto.ARCODI)
+            AND (dcargos.DETIPO <> 3)) and dcargos.DECODI="'.$id.'"
+    GROUP BY dcargos.DECODI , YEAR(dcargos.DEFECO) , MONTH(dcargos.DEFECO)
+    	order by Codigo,Fecha desc');
+
+        dd($Consulta);
     }
 }

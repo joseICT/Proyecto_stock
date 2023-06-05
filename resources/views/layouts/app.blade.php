@@ -79,5 +79,6 @@
     </div>
     <!-- llamar al estilo js -->
     @yield('js')
+    
 </body>
 </html>

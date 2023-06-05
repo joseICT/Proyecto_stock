@@ -23,8 +23,9 @@ CODIGO - DESCIPCION - VENTAS ACTUALES - VENTAS_MES_Y_AÑO_PASADO - STOCK_ACTUAL 
                 <th>Nombre del producto</th>
                 <th>ultima fecha de venta registrada</th>
                 <th>Ventas totales de ese mes</th>
-                <th>Media de ventas de ese año</th>
-                <th>Stock actual en bodega</th>                                                       
+                <th>Media de ventas</th>
+                <th>Bodega</th>
+                <th>Stock desaparecido</th>                                                       
             </tr>
         </thead>
     <tbody>
@@ -32,16 +33,19 @@ CODIGO - DESCIPCION - VENTAS ACTUALES - VENTAS_MES_Y_AÑO_PASADO - STOCK_ACTUAL 
 poder mostrar solo los datos del ultimo registro de ventas del mes de cada producto que aun tenga stock en bodega y este debajo de la media de ventas del año del 
 ultimo registro de ventas-->
     @foreach($datos as $lista )
-    @if($lista->Codigo != $variable)
+    @if(strtoupper($lista->Codigo) != $variable)
     @if($lista->Media_de_ventas >= $lista->Bodega) 
     <tr>
-        <td>{{$lista->Codigo}}</td>
+        <td>{{strtoupper($lista->Codigo)}}</td>
         <td>{{$lista->Detalle}}</td>
         <td>{{$lista->fecha}}</td>
         <td>{{$lista->Ventas_del_mes}}</td>
         <td>{{$lista->Media_de_ventas}}</td>
-        <td>{{$lista->Bodega}}</td>                      
-    </tr>
+        <td>{{$lista->Bodega}}</td>
+        <td><form action="/Registro/{{$lista->Codigo}}" method= GET>
+            <button href="#"  id="{{$lista->Codigo}}" value="{{$lista->Codigo}}" data-toggle="modal" data-target=#ModalVer class="btn btn-success btn-block checkout-btn">Consultar</button></td>     
+            </form>
+        </tr>
     <?php $variable=$lista->Codigo ?>
     @else
     <?php $variable=$lista->Codigo ?>
@@ -53,6 +57,33 @@ ultimo registro de ventas-->
 </div>
 </div>
 
+<div class="modal fade" id="ModalVer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Producto</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      <table id="StockNecesario" class="table table-striped table-bordered" style="width:100%">
+      <thead>        
+        <tr>
+          <th>Ventas del mes</th>
+          <th>Fecha</th>
+        </tr>        
+      </thead>
+      <tbody>
+      </tbody>
+      </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
 @endsection
 
 @section('js')
@@ -72,12 +103,12 @@ ultimo registro de ventas-->
 // ejecutar un scrip que agrega distintas herramientas a la tabla de datos  
     $(document).ready(function () {
     $.noConflict();
-    $('#StockNecesario').DataTable({
-        dom: 'Bfrtip',
-        buttons: [
-            'excel', 'pdf'
+        $('#StockNecesario').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'excel', 'pdf'
         ]
+        });
     });
-});
 </script>
 @endsection

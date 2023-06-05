@@ -22,3 +22,4 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/stocknecesario','StockNecesarioController@list');
 Route::get('/stocknecesario/{id}','StockNecesarioController@Search_ID');
 Route::get('/stockperdido','StockPerdidoController@list');
+Route::get('/Registro/{id}','StockNecesarioController@HistorialRegistro');
