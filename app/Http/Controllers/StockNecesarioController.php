@@ -18,9 +18,13 @@ class StockNecesarioController extends Controller
     //actualizacion se modifico la vista y ahora entrega la media de ventas del año por producto
     //Se creo otra vista para evitar borrar la anterior
     public function list(){
-        $datos=DB::table('Stock_critico_2')  
+        $datos=DB::table('Stock_critico_2')        
         ->get();
-        return view('StockNecesario',compact('datos'));
+        $familia=DB::table('vv_tablas22') 
+        ->get();
+        $comentario=DB::table('comentario_stock_critico')
+        ->get();
+        return view('StockNecesario',compact('datos','familia','comentario'));
     }
 
     public function Search_ID($id){
@@ -31,6 +35,7 @@ class StockNecesarioController extends Controller
         //return Redirect::back()->with('',compact('datos'));
     }
 
+    //guardar y devolver registro de ventas de un determinado producto
     public function HistorialRegistro($id){
         $Consulta=DB::select(' SELECT 
         `dcargos`.`DECODI` AS `Codigo`,

@@ -11,46 +11,102 @@ CODIGO - DESCIPCION - VENTAS ACTUALES - VENTAS_MES_Y_AÑO_PASADO - STOCK_ACTUAL 
 
 @section('content')
 <?php $variable=0?>
-<div class="container mt-5">
+<div class="crow d-flex justify-content-center">
     <div class="card-body">
 
-<table id="StockNecesario" class="table table-striped table-bordered" style="width:100%">
+<table  id="StockNecesario" class="table table-striped table-bordered" style="width:100%">
 <!-- SE agrego la media de ventas para mostrar solo los productos que en bodega sean menores a la media de venta  -->
 <!-- Se relizaron cambios de texto y posicion solamente -->
         <thead>
             <tr>
+                <th>Estado</th>
                 <th>Codigo</th> 
                 <th>Nombre del producto</th>
+                <th>Marca del producto</th>
+                <th>Familia del producto</th>
                 <th>ultima fecha de venta registrada</th>
                 <th>Ventas totales de ese mes</th>
                 <th>Media de ventas</th>
                 <th>Bodega</th>
-                <th>Stock desaparecido</th>                                                       
+                <th>Comentario</th>
+                <th>Editar comentario</th> 
+                <th>Historial de ventas</th>                                                                                  
             </tr>
         </thead>
     <tbody>
 <!-- el mayor cambio es aqui al revisar los datos de la vista anterior se observo que habian datos perdidos por lo que se uso otra vista y se agrgaron mas filtros para
 poder mostrar solo los datos del ultimo registro de ventas del mes de cada producto que aun tenga stock en bodega y este debajo de la media de ventas del año del 
 ultimo registro de ventas-->
+
+<!-- agregada en la tabla marca, familia del producto y ademas poder colocar comentario al producto(aun contruyendo) -->
     @foreach($datos as $lista )
     @if(strtoupper($lista->Codigo) != $variable)
-    @if($lista->Media_de_ventas >= $lista->Bodega) 
-    <tr>
+    @if($lista->Media_de_ventas*1.2 >= $lista->Bodega)
+    @foreach($familia as $family)
+    @if($lista->codigo_familia == $family->tarefe)
+    @if($lista->Media_de_ventas>=$lista->Bodega)
+    <tr class="text-danger">
+        <td>A</td>
         <td>{{strtoupper($lista->Codigo)}}</td>
         <td>{{$lista->Detalle}}</td>
+        <td>{{$lista->Marca_producto}}</td>        
+        <td>{{$family->taglos}}</td>
         <td>{{$lista->fecha}}</td>
         <td>{{$lista->Ventas_del_mes}}</td>
         <td>{{$lista->Media_de_ventas}}</td>
         <td>{{$lista->Bodega}}</td>
+        @foreach($comentario as $coment)
+        @if($coment->Codigo==$lista->Codigo)
+        <td>{{$coment->Comentario}}</td>
+        @else
+        <td></td>
+        @endif
+        @endforeach
+        <td>
+            <button 
+             class="btn btn-primary" data-target=#ModalNota data-toggle="modal">Comentar</button>
+        </td>
         <td><form action="/Registro/{{$lista->Codigo}}" method= GET>
-            <button href="#"  id="{{$lista->Codigo}}" value="{{$lista->Codigo}}" data-toggle="modal" data-target=#ModalVer class="btn btn-success btn-block checkout-btn">Consultar</button></td>     
-            </form>
+            <button href="#"  id="{{$lista->Codigo}}" value="{{$lista->Codigo}}" data-toggle="modal"
+             data-target=#ModalVer class="btn btn-success btn-block checkout-btn">Consultar</button></form>
+        </td>                    
         </tr>
-    <?php $variable=$lista->Codigo ?>
+    @else
+    <tr class="text-warning">
+      <td>B</td>
+        <td>{{strtoupper($lista->Codigo)}}</td>
+        <td>{{$lista->Detalle}}</td>
+        <td>{{$lista->Marca_producto}}</td>        
+        <td>{{$family->taglos}}</td>
+        <td>{{$lista->fecha}}</td>
+        <td>{{$lista->Ventas_del_mes}}</td>
+        <td>{{$lista->Media_de_ventas}}</td>
+        <td>{{$lista->Bodega}}</td>
+        @foreach($comentario as $coment)
+        @if($coment->Codigo==$lista->Codigo)
+        <td>{{$coment->Comentario}}</td>
+        @else
+        <td></td>
+        @endif
+        @endforeach
+        <td>
+            <button 
+             class="btn btn-primary" data-target=#ModalNota data-toggle="modal">Comentar</button>
+        </td>
+        <td><form action="/Registro/{{$lista->Codigo}}" method= GET>
+            <button href="#"  id="{{$lista->Codigo}}" value="{{$lista->Codigo}}" data-toggle="modal"
+             data-target=#ModalVer class="btn btn-success btn-block checkout-btn">Consultar</button></form>
+        </td>            
+        </tr>
+    @endif
+    <?php $variable=$lista->Codigo ?>    
+    @endif
+    @endforeach    
     @else
     <?php $variable=$lista->Codigo ?>
     @endif
     @endif
+    
     @endforeach
     </tbody>   
 </table>
@@ -80,6 +136,27 @@ ultimo registro de ventas-->
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="ModalNota" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Comentar</h5>
+        
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="text">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
       </div>
     </div>
   </div>
