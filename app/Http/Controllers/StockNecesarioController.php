@@ -58,6 +58,10 @@ class StockNecesarioController extends Controller
     GROUP BY dcargos.DECODI , YEAR(dcargos.DEFECO) , MONTH(dcargos.DEFECO)
     	order by Codigo,Fecha desc');
 
-        dd($Consulta);
+        return response()->json($Consulta);
+    }
+
+    public function CrearComentario(){
+
     }
 }

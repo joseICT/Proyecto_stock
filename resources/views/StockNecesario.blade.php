@@ -63,12 +63,14 @@ ultimo registro de ventas-->
         @endif
         @endforeach
         <td>
+          <form method="POST" action=>
             <button 
              class="btn btn-primary" data-target=#ModalNota data-toggle="modal">Comentar</button>
+             </form>
         </td>
-        <td><form action="/Registro/{{$lista->Codigo}}" method= GET>
-            <button href="#"  id="{{$lista->Codigo}}" value="{{$lista->Codigo}}" data-toggle="modal"
-             data-target=#ModalVer class="btn btn-success btn-block checkout-btn">Consultar</button></form>
+        <td>
+            <button onclick='historial({{$lista->Codigo}})' href="#"  id="{{$lista->Codigo}}" value="{{$lista->Codigo}}" data-toggle="modal"
+             data-target=#ModalVer class="btn btn-success btn-block checkout-btn">Consultar</button>
         </td>                    
         </tr>
     @else
@@ -117,20 +119,21 @@ ultimo registro de ventas-->
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Producto</h5>
+        <h5 class="modal-title" id="exampleModalLongTitle">Historial de ventas</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-      <table id="StockNecesario" class="table table-striped table-bordered" style="width:100%">
+      <table id="StockModal" class="table table-striped table-bordered" style="width:100%">
       <thead>        
         <tr>
           <th>Ventas del mes</th>
           <th>Fecha</th>
         </tr>        
       </thead>
-      <tbody>
+      <tbody id='Tablahistorial'>
+
       </tbody>
       </table>
       </div>
@@ -187,5 +190,20 @@ ultimo registro de ventas-->
         ]
         });
     });
+    function historial(id){
+      $("#StockModal td").remove(); 
+      console.log("id: "+id);
+      $.ajax({
+          type:'GET',
+          url:'/Registro/'+id,
+          success:function(data){
+            data.forEach(element =>{
+                
+                $("#Tablahistorial" ).append( "<tr><td>"+element.Ventas_del_mes+"</td> <td>"+element.fecha+"</td></tr> " );
+              
+            })
+        }
+      })
+    }
 </script>
 @endsection
