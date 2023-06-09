@@ -94,7 +94,7 @@ ultimo registro de ventas-->
              class="btn btn-primary" data-target=#ModalComentar data-toggle="modal">Comentar</button>
         </td>
         <td>
-        <button onclick='historial({{$lista->Codigo}})' href="#"  id="{{$lista->Codigo}}" value="{{$lista->Codigo}}" data-toggle="modal"
+        <button onclick='historial(id,value)' href="#"  id="{{$lista->Codigo}}" value="{{$lista->Codigo}}" data-toggle="modal"
              data-target=#ModalVer class="btn btn-success btn-block checkout-btn">Consultar</button>
         </td>            
         </tr>
