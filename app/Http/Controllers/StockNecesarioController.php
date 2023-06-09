@@ -61,7 +61,7 @@ class StockNecesarioController extends Controller
         return response()->json($Consulta);
     }
 
-    public function CrearComentario(){
-
+    public function IngrearComentario($ID,$Comentario){
+        $Consulta2=DB::insert('INSERT INTO `comentario_stock_critico` (`Codigo`, `Comentario`) VALUES ('.$ID.', '.$Comentario.')');
     }
 }

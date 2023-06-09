@@ -63,13 +63,11 @@ ultimo registro de ventas-->
         @endif
         @endforeach
         <td>
-          <form method="POST" action=>
             <button 
-             class="btn btn-primary" data-target=#ModalNota data-toggle="modal">Comentar</button>
-             </form>
+             class="btn btn-primary" onclick='IngresarID({{$lista->Codigo}})' data-target=#ModalComentar data-toggle="modal">Comentar</button>
         </td>
         <td>
-            <button onclick='historial({{$lista->Codigo}})' href="#"  id="{{$lista->Codigo}}" value="{{$lista->Codigo}}" data-toggle="modal"
+            <button onclick='historial(id, value)' href="#"  id="{{$lista->Codigo}}" value="{{$lista->Detalle}}" data-toggle="modal"
              data-target=#ModalVer class="btn btn-success btn-block checkout-btn">Consultar</button>
         </td>                    
         </tr>
@@ -93,11 +91,11 @@ ultimo registro de ventas-->
         @endforeach
         <td>
             <button 
-             class="btn btn-primary" data-target=#ModalNota data-toggle="modal">Comentar</button>
+             class="btn btn-primary" data-target=#ModalComentar data-toggle="modal">Comentar</button>
         </td>
-        <td><form action="/Registro/{{$lista->Codigo}}" method= GET>
-            <button href="#"  id="{{$lista->Codigo}}" value="{{$lista->Codigo}}" data-toggle="modal"
-             data-target=#ModalVer class="btn btn-success btn-block checkout-btn">Consultar</button></form>
+        <td>
+        <button onclick='historial({{$lista->Codigo}})' href="#"  id="{{$lista->Codigo}}" value="{{$lista->Codigo}}" data-toggle="modal"
+             data-target=#ModalVer class="btn btn-success btn-block checkout-btn">Consultar</button>
         </td>            
         </tr>
     @endif
@@ -118,11 +116,8 @@ ultimo registro de ventas-->
 <div class="modal fade" id="ModalVer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Historial de ventas</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+      <div class="modal-header" id='TituloProducto'>
+        
       </div>
       <div class="modal-body">
       <table id="StockModal" class="table table-striped table-bordered" style="width:100%">
@@ -144,11 +139,10 @@ ultimo registro de ventas-->
   </div>
 </div>
 
-<div class="modal fade" id="ModalNota" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+<div class="modal fade" id="ModalComentar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Comentar</h5>
+      <div class="modal-header" id="TituloComentario">
         
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
@@ -190,20 +184,31 @@ ultimo registro de ventas-->
         ]
         });
     });
-    function historial(id){
-      $("#StockModal td").remove(); 
-      console.log("id: "+id);
+
+    function historial(id,detail){
+      console.log(id);
+      console.log(detail);
+      $("#StockModal td").remove();
+      $("#TituloProducto h5").remove();
+
+      $("#TituloProducto").append("<h5>"+detail+"</h5>");
       $.ajax({
           type:'GET',
           url:'/Registro/'+id,
           success:function(data){
+            
             data.forEach(element =>{
+                $("#Tablahistorial" ).append( "<tr><td class=text-center>"+element.Ventas_del_mes+"</td> <td>"+element.fecha+"</td></tr> " );
                 
-                $("#Tablahistorial" ).append( "<tr><td>"+element.Ventas_del_mes+"</td> <td>"+element.fecha+"</td></tr> " );
-              
             })
         }
       })
+    }
+
+    function IngresarID(id){
+      $("#TituloComentario h5").remove();
+      $('#TituloComentario').append("<h5 class=modal-title>"+id+"</h5>");
+      console.log(id);
     }
 </script>
 @endsection
