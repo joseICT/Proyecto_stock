@@ -24,15 +24,13 @@ class StockNecesarioController extends Controller
         ->get();
         $comentario=DB::table('comentario_stock_critico')
         ->get();
-        return view('StockNecesario',compact('datos','familia','comentario'));
+        $estado=DB::table('producto_clasificar')
+        ->get();
+        return view('StockNecesario',compact('datos','familia','comentario','estado'));
     }
 
-    public function Search_ID($id){
-
-        //no funciona todavia
-        //$registro=DB::table('Stock_critico')->where('Codigo','=',$id)->get();
-        //return redirect('StockNecesario')->with(compact('registro'));
-        //return Redirect::back()->with('',compact('datos'));
+    //actualizar varible para trasferir producto a stock guardado
+    public function ActualizarVariable($id){
     }
 
     //guardar y devolver registro de ventas de un determinado producto
@@ -63,5 +61,10 @@ class StockNecesarioController extends Controller
 
     public function IngrearComentario($ID,$Comentario){
         $Consulta2=DB::insert('INSERT INTO `comentario_stock_critico` (`Codigo`, `Comentario`) VALUES ('.$ID.', '.$Comentario.')');
+    }
+
+    public function CambiarVariable($Id){
+        $Consulta=DB::insert('INSERT INTO `producto_clasificar` (`Codigo`, `Estado`) VALUES ("'.$Id.'", 1)');
+        return response()->json($Consulta);        
     }
 }

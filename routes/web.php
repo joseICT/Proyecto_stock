@@ -22,4 +22,16 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/stocknecesario','StockNecesarioController@list');
 Route::get('/stocknecesario/{id}','StockNecesarioController@Search_ID');
 Route::get('/stockperdido','StockPerdidoController@list');
+//Ruta donde muestra el hitorial de venta de determinado producto
 Route::get('/Registro/{id}','StockNecesarioController@HistorialRegistro');
+//Ruta para ingregar comentario
+Route::get('/IngresarComentario/{id}','StockNecesarioController@IngrearComentario');
+
+//Ruta a la pagina de StockGuardado
+Route::get('/stockarchivado','StockGuardadoController@list');
+
+//Ruta de cambio de variable de la vista stockguardado
+Route::get('/TransferirB/{id}','StockGuardadoController@ActualizarVariable');
+
+//Ruta de cambio de variable de la vista stockNecesario
+Route::get('/TrasnferirA/{id}','StockNecesarioController@ActualizarVariable');

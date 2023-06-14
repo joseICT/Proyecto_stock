@@ -1,7 +1,5 @@
-<!--Agregar la dataTable e insertar los datos de una vista creada para mostrar productos vendidos a lo largo del año actual
-y mostar porcentaje de ventas de cada produto  
-Posbles datos a usar una vez conversado los requerimientos 
-CODIGO - DESCIPCION - VENTAS ACTUALES - VENTAS_MES_Y_AÑO_PASADO - STOCK_ACTUAL - STOCK_RECOMENDABLE - AVISO DE REABASTECIMINETO DEL MES-->
+<!-- Es una copia de la vista stock necesario para replicar y mostrar los productos que se transfieran y viceversa-->
+
 @extends('layouts.app')
 
 @section('css')
@@ -15,8 +13,6 @@ CODIGO - DESCIPCION - VENTAS ACTUALES - VENTAS_MES_Y_AÑO_PASADO - STOCK_ACTUAL 
     <div class="card-body">
 
 <table  id="StockNecesario" class="table table-striped table-bordered" style="width:100%">
-<!-- SE agrego la media de ventas para mostrar solo los productos que en bodega sean menores a la media de venta  -->
-<!-- Se relizaron cambios de texto y posicion solamente -->
         <thead>
             <tr>
                 <th>Estado</th>
@@ -32,21 +28,18 @@ CODIGO - DESCIPCION - VENTAS ACTUALES - VENTAS_MES_Y_AÑO_PASADO - STOCK_ACTUAL 
             </tr>
         </thead>
     <tbody>
-<!-- el mayor cambio es aqui al revisar los datos de la vista anterior se observo que habian datos perdidos por lo que se uso otra vista y se agrgaron mas filtros para
-poder mostrar solo los datos del ultimo registro de ventas del mes de cada producto que aun tenga stock en bodega y este debajo de la media de ventas del año del 
-ultimo registro de ventas-->
-
-<!-- agregada en la tabla marca, familia del producto y ademas poder colocar comentario al producto(aun contruyendo) -->
-    @foreach($datos as $lista )
-    @if(strtoupper($lista->Codigo) != $variable)
+    @foreach($status as $listado)
+    @if(($listado->Estado)==1) 
+    @foreach($datos as $lista)
+    @if(strtoupper($lista->Codigo) != $variable && ($listado->Codigo)==($lista->Codigo))
     @if($lista->Media_de_ventas*1.2 >= $lista->Bodega)
     @foreach($familia as $family)
     @if($lista->codigo_familia == $family->tarefe)
     @if($lista->Media_de_ventas>=$lista->Bodega)
-    <tr class="text-danger" id="{{$lista->Codigo}}">
+    <tr class="text-danger">
         <td>Critico</td>
     @else
-        <tr class="text-warning" id="{{$lista->Codigo}}">
+        <tr class="text-warning">
         <td>Cercano critico</td>
     @endif
         <td>{{strtoupper($lista->Codigo)}}</td>
@@ -60,7 +53,7 @@ ultimo registro de ventas-->
         <td>
         <button onclick='IngresarComentario(id,value)' value="{{$lista->Detalle}}" id="{{$lista->Codigo}}" data-target=#ModalComentar data-toggle="modal"></button>
         <button onclick='historial(id,value)' value="{{$lista->Detalle}}" id="{{$lista->Codigo}}" data-target=#ModalVer data-toggle="modal"></button>
-        <button onclick='ClasificarProducto(id)' id="{{$lista->Codigo}}"></button>
+        <button onclick='CambiarVariable(id)' id="{{$lista->Codigo}}"></button>
         <!-- <i class="fas fa-comment" onclick='IngresarComentario(id,value)' value="{{$lista->Detalle}}" id="{{$lista->Codigo}}" data-target=#ModalComentar data-toggle="modal"></i>
         <i class="fas fa-list" onclick='historial(id,value)' value="{{$lista->Detalle}}" id="{{$lista->Codigo}}" data-target=#ModalComentar data-toggle="modal"></i>
         <i class="fas fa-exchange"></i> -->
@@ -74,6 +67,8 @@ ultimo registro de ventas-->
     @endif
     @endif
     
+    @endforeach
+    @endif
     @endforeach
     </tbody>   
 </table>
@@ -120,7 +115,6 @@ ultimo registro de ventas-->
     </div>
   </div>
 </div>
-
 @endsection
 
 @section('js')
@@ -137,7 +131,6 @@ ultimo registro de ventas-->
 
 
 <script>  
-// ejecutar un scrip que agrega distintas herramientas a la tabla de datos  
     $(document).ready(function () {
     $.noConflict();
         $('#StockNecesario').DataTable({
@@ -177,28 +170,15 @@ ultimo registro de ventas-->
       $("#TituloComentario").append("<button type=button class='btn btn-primary' onclick=CrearComentario() id="+id+">Guardar</button>");
     }
 
-    function CrearComentario(id,Comentario){
-      $.ajax({
-        type:'POST',
-        url:'/IngresarComentario/'+id,
-        data:{Cod:"id",Coment:"Comentario"},
-        success:function(datos){
-          console.log(datos.promedio)
-        },
-        
-      })
-    }
-
-    function ClasificarProducto(id){
-      $("#"+id+" td").remove();
-      $.ajax({
-        type:'POST',
-        url:'/TransferirA/'+id,
-        data:{ID:"id"},
-        success:function(datos){
-          console.log(datos.promedio)
-        },
-      })
+    function CambiarVariable(id){
+        $.ajax({
+            type:'POST',
+            url:'/TransferirB/'+id,
+            data:{ID:"id"},
+            success:function(datos){
+                console.log(datos.promedio)
+            },
+        })
     }
 </script>
 @endsection
