@@ -64,7 +64,7 @@ class StockNecesarioController extends Controller
     }
 
     public function CambiarVariable($Id){
-        $Consulta=DB::insert('INSERT INTO `producto_clasificar` (`Codigo`, `Estado`) VALUES ("'.$Id.'", 1)');
-        return response()->json($Consulta);        
+        $Consulta=DB::insert('INSERT INTO `producto_clasificar` (`Codigo`, `Estado`) VALUES ("'.$Id.'","1")');
+        return response()->json(['status'=>'ok']);
     }
 }

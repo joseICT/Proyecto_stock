@@ -5,6 +5,7 @@
 @section('css')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 @endsection
 
 @section('content')
@@ -36,10 +37,10 @@
     @foreach($familia as $family)
     @if($lista->codigo_familia == $family->tarefe)
     @if($lista->Media_de_ventas>=$lista->Bodega)
-    <tr class="text-danger">
+    <tr class="text-danger" id="{{$lista->Codigo}}">
         <td>Critico</td>
     @else
-        <tr class="text-warning">
+        <tr class="text-warning" id="{{$lista->Codigo}}">
         <td>Cercano critico</td>
     @endif
         <td>{{strtoupper($lista->Codigo)}}</td>
@@ -51,12 +52,9 @@
         <td>{{$lista->Media_de_ventas}}</td>
         <td>{{$lista->Bodega}}</td>
         <td>
-        <button onclick='IngresarComentario(id,value)' value="{{$lista->Detalle}}" id="{{$lista->Codigo}}" data-target=#ModalComentar data-toggle="modal"></button>
-        <button onclick='historial(id,value)' value="{{$lista->Detalle}}" id="{{$lista->Codigo}}" data-target=#ModalVer data-toggle="modal"></button>
-        <button onclick='CambiarVariable(id)' id="{{$lista->Codigo}}"></button>
-        <!-- <i class="fas fa-comment" onclick='IngresarComentario(id,value)' value="{{$lista->Detalle}}" id="{{$lista->Codigo}}" data-target=#ModalComentar data-toggle="modal"></i>
-        <i class="fas fa-list" onclick='historial(id,value)' value="{{$lista->Detalle}}" id="{{$lista->Codigo}}" data-target=#ModalComentar data-toggle="modal"></i>
-        <i class="fas fa-exchange"></i> -->
+        <button class="fa fa-comment text-primary border border-light"  onclick='IngresarComentario(id,value)' value="{{$lista->Detalle}}" id="{{$lista->Codigo}}" data-target=#ModalComentar data-toggle="modal"></button>
+        <button class="fa fa-list text-primary border border-light"  onclick='historial(id,value)' value="{{$lista->Detalle}}" id="{{$lista->Codigo}}" data-target=#ModalVer data-toggle="modal"></button>
+        <button class="fa fa-exchange text-primary border border-light"  onclick='CambiarVariable(id)'  id="{{$lista->Codigo}}"></button>
         </td>                  
         </tr>
     <?php $variable=$lista->Codigo ?>    
@@ -70,7 +68,21 @@
     @endforeach
     @endif
     @endforeach
-    </tbody>   
+    </tbody>  
+    <tfoot>
+            <tr>
+                <th>Estado</th>
+                <th>Codigo</th>
+                <th>Nombre</th>
+                <th>Marca</th>
+                <th>Familia</th>
+                <th>Fecha</th>
+                <th>Ventas</th>
+                <th>Media</th>
+                <th>Bodega</th>
+                <th>botones</th>
+            </tr>
+        </tfoot>  
 </table>
 </div>
 </div>
@@ -132,8 +144,24 @@
 
 <script>  
     $(document).ready(function () {
-    $.noConflict();
+      $.noConflict();
+    $('#StockNecesario tfoot th').each(function(){
+          $(this).html('<input type="text" style="width: 100% ; padding: 3px; box-sizing: border-box" placeholder="Buscar" />');
+        });
         $('#StockNecesario').DataTable({
+          initComplete: function () {
+            // Apply the search
+            this.api()
+                .columns()
+                .every(function () {
+                    var that = this; 
+                    $('input', this.footer()).on('keyup change clear', function () {
+                        if (that.search() !== this.value) {
+                            that.search(this.value).draw();
+                        }
+                    });
+                });
+        },
             dom: 'Bfrtip',
             buttons: [
                 'excel', 'pdf'
@@ -167,18 +195,35 @@
       $("#TituloDescripcion").append("<h5 id="+id+">"+descripcion+"</h5>");
       $("#TituloDescripcion").append("<h5 class=invisible>"+id+"</h5>");
       $("#TituloComentario").append("<button type=button class='btn btn-secondary' data-dismiss=modal>Cerrar</button>");
-      $("#TituloComentario").append("<button type=button class='btn btn-primary' onclick=CrearComentario() id="+id+">Guardar</button>");
+      $("#TituloComentario").append("<button type=button class='btn btn-primary' onclick=CrearComentario(id) id="+id+">Guardar</button>");
     }
 
     function CambiarVariable(id){
-        $.ajax({
-            type:'POST',
-            url:'/TransferirB/'+id,
-            data:{ID:"id"},
-            success:function(datos){
-                console.log(datos.promedio)
-            },
-        })
+      $('#'+id+' button').attr("disabled", true);
+      $.ajax({
+        type:'DELETE',
+        url:'/TransferirB/'+id,
+        data: {
+        "_token": $("meta[name='csrf-token']").attr("content")
+        },
+        success:function(datos){
+          alert('Se realizo el cambio')
+        },
+            
+      })
+      
+    }
+
+    function CrearComentario(id){
+      $.ajax({
+        type:'POST',
+        url:'/IngresarComentario/'+id,
+        data:{Cod:"id",Coment:"hola","_token": $("meta[name='csrf-token']").attr("content")},
+        success:function(datos){
+          console.log(datos.promedio)
+        },
+        
+      })
     }
 </script>
 @endsection

@@ -22,7 +22,17 @@ class StockGuardadoController extends Controller
     }
 
     //actualizar varible para trasferir producto a stock guardado
-    public function ActualizarVariable($id){
-        $Consulta=DB::insert('INSERT INTO `producto_clasificar` (`Codigo`, `Estado`) VALUES ("'.$id.'", 2)');        
+    public function BorrarVariable($Id){
+        $Consulta=DB::delete('DELETE FROM `producto_clasificar` WHERE `Codigo`="'.$Id.'"');
+        return response()->json(['status'=>'ok']);
+    }
+
+    //crear o actualizar comentario
+    public function EscribirComentario($Id,$COMENT){
+        if(comentario_stock_critico::where('Codigo',$Id)->exist()){
+            $Consulta=DB::update('UPDATE * FROM `comentario_stock_critico` SET `Codigo` = "'.$ID.'", `Comentario`="'.$COMENT.'"');
+        }else{
+            $Consulta=DB::insert('INSERT * FROM `comentario_stock_critico` (`Codigo`,`Comentario`) VALUES ("'.$Id.'","'.$COMENT.'")');
+        }
     }
 }
