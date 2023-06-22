@@ -25,7 +25,7 @@ Route::get('/stockperdido','StockPerdidoController@list');
 //Ruta donde muestra el hitorial de venta de determinado producto
 Route::get('/Registro/{id}','StockNecesarioController@HistorialRegistro');
 //Ruta para ingregar comentario
-Route::post('/IngresarComentario/{id}','StockGuardadoController@IngrearComentario');
+Route::post('/IngresarComentario/{id}','StockGuardadoController@EscribirComentario');
 
 //Ruta a la pagina de StockGuardado
 Route::get('/stockarchivado','StockGuardadoController@list');
@@ -36,3 +36,6 @@ Route::post('/TransferirA/{id}','StockNecesarioController@CambiarVariable');
 //Ruta de cambio de variable de la vista stockguardado
 Route::delete('/TransferirB/{id}','StockGuardadoController@BorrarVariable');
 
+Route::post('/GenerarOrden/{id}','StockNecesarioController@RealizarRequerimiento');
+
+Route::post('/ClasificarVenta','StockNecesarioController@RealizarRequerimiento');

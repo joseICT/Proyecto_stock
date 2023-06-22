@@ -32,7 +32,7 @@ $coincidente=0?>
                 <th>Ventas del mes</th>
                 <th>Media de ventas</th>
                 <th>Bodega</th>
-                <th>Comentar/Ventas/Transferir</th>                                                                                 
+                <th>Comentar/Ventas/Transferir/Orden</th>                                                                                 
             </tr>
         </thead>
     <tbody>
@@ -81,6 +81,7 @@ ultimo registro de ventas-->
         <button class="fa fa-comment text-primary border border-light"  onclick='IngresarComentario(id,value)' value="{{$lista->Detalle}}" id="{{$lista->Codigo}}" data-target=#ModalComentar data-toggle="modal"></button>
         <button class="fa fa-list text-primary border border-light"  onclick='historial(id,value)' value="{{$lista->Detalle}}" id="{{$lista->Codigo}}" data-target=#ModalVer data-toggle="modal"></button>
         <button class="fa fa-exchange text-primary border border-light"  onclick='ClasificarProducto(id)'  id="{{$lista->Codigo}}"></button>
+        <button class="fa fa-external-link-square text-primary border border-light"  onclick='GenerarOrden(id,value)'  id="{{$lista->Codigo}}" value="{{$lista->Detalle}}"></button>
         </td>                  
         </tr>
     <?php $variable=$lista->Codigo;
@@ -124,7 +125,7 @@ ultimo registro de ventas-->
       <div class="modal-header" id='TituloProducto'>
         
       </div>
-      <div class="modal-body">
+      <div class="modal-body" id="ModalContenedor">
       <table id="StockModal" class="table table-striped table-bordered" style="width:100%">
       <thead>        
         <tr>
@@ -137,8 +138,8 @@ ultimo registro de ventas-->
       </tbody>
       </table>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+      <div class="modal-footer" id='ModalFooter'>
+        
       </div>
     </div>
   </div>
@@ -208,24 +209,29 @@ ultimo registro de ventas-->
        
     });
 
-    function historial(id,detail){      
+    function historial(id,detail){     
+      
       console.log(id);
       console.log(detail);
       $("#StockModal td").remove();
       $("#TituloProducto h5").remove();
-
+      $("#ModalFooter button").remove();
       $("#TituloProducto").append("<h5>"+detail+"</h5>");
+      $('#ModalFooter').append("<button type=button class='btn btn-primary' onclick=BorrarFiltro("+id+")>Reiniciar</button> <button type=button class='btn btn-secondary' data-dismiss=modal>Cerrar</button>")
       $.ajax({
           type:'GET',
           url:'/Registro/'+id,
           success:function(data){
-            
+            $('#StockModal').dataTable().fnClearTable();
+            $('#StockModal').dataTable().fnDestroy();
             data.forEach(element =>{
-                $("#Tablahistorial" ).append( "<tr><td class=text-center>"+element.Ventas_del_mes+"</td> <td>"+element.fecha+"</td></tr> " );
+                $("#Tablahistorial" ).append( "<tr><td>"+element.Ventas_del_mes+"</td> <td>"+element.fecha+"</td></tr>" );
                 
             })
+            $('#StockModal').DataTable();
         }
       })
+      
     }
 
     function IngresarComentario(id,descripcion){
@@ -251,17 +257,29 @@ ultimo registro de ventas-->
 
     function ClasificarProducto(id){
       $('#'+id+' button').attr("disabled", true);
+      $('#'+id+' td').addClass("table-success");
       $.ajax({
         type:'POST',
         url:'/TransferirA/'+id,
         data: {
-        "_token": $("meta[name='csrf-token']").attr("content")
+          "_token": $("meta[name='csrf-token']").attr("content")
+        },
+        success:function(datos){          
+        },            
+      })      
+    }
+
+    function GenerarOrden(id,value){
+      $.ajax({
+        type:'POST',
+        url:'/GenerarOrden/'+id,
+        data:{
+          "_token": $("meta[name='csrf-token']").attr("content")
         },
         success:function(datos){
-          alert('Se realizo el cambio')
         },
-            
       })
+      alert("REQUERIMIENTO CREADO PARA EL PRODUCTO: "+value);
     }
 </script>
 @endsection

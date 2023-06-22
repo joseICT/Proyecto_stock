@@ -59,12 +59,17 @@ class StockNecesarioController extends Controller
         return response()->json($Consulta);
     }
 
-    public function IngrearComentario($ID,$Comentario){
-        $Consulta2=DB::insert('INSERT INTO `comentario_stock_critico` (`Codigo`, `Comentario`) VALUES ('.$ID.', '.$Comentario.')');
-    }
 
     public function CambiarVariable($Id){
         $Consulta=DB::insert('INSERT INTO `producto_clasificar` (`Codigo`, `Estado`) VALUES ("'.$Id.'","1")');
-        return response()->json(['status'=>'ok']);
+
+    }
+
+    public function RealizarRequerimiento($Codigo){
+        
+        $Consulta=DB::table('producto')->where('ARCODI',$Codigo)->first();
+        
+        $Consul=DB::insert('INSERT INTO `requerimiento_compra` (`codigo`,`descripcion`,`marca`,`cantidad`,`depto`,`estado`,`observacion_interna`)
+         VALUES ("'.$Codigo.'","'.$Consulta->ARDESC.'","'.$Consulta->ARMARCA.'","1","Stock Critico","INGRESADO","Stock Critico")');
     }
 }

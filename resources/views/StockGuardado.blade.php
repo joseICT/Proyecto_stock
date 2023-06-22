@@ -10,7 +10,7 @@
 
 @section('content')
 <?php $variable=0?>
-<div class="crow d-flex justify-content-center">
+<div>
     <div class="card-body">
 
 <table  id="StockNecesario" class="table table-striped table-bordered" style="width:100%">
@@ -93,7 +93,7 @@
       <div class="modal-header" id='TituloProducto'>
         
       </div>
-      <div class="modal-body">
+      <div class="modal-body" id="ModalContenedor">
       <table id="StockModal" class="table table-striped table-bordered" style="width:100%">
       <thead>        
         <tr>
@@ -106,8 +106,8 @@
       </tbody>
       </table>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+      <div class="modal-footer" id='ModalFooter'>
+        
       </div>
     </div>
   </div>
@@ -119,7 +119,7 @@
       <div class="modal-header" id='TituloDescripcion'>
 
       </div>
-      <div class="modal-body">
+      <div class="modal-body" id="CuerpoModal">
         <input class="form-control input-lg" type="text">
       </div>
       <div class="modal-footer" id="TituloComentario">
@@ -169,24 +169,34 @@
         });
     });
 
-    function historial(id,detail){      
+    function historial(id,detail){     
+      
       console.log(id);
       console.log(detail);
       $("#StockModal td").remove();
       $("#TituloProducto h5").remove();
-
+      $("#ModalFooter button").remove();
       $("#TituloProducto").append("<h5>"+detail+"</h5>");
+      $('#ModalFooter').append("<button type=button class='btn btn-primary' onclick=BorrarFiltro("+id+")>Reiniciar</button> <button type=button class='btn btn-secondary' data-dismiss=modal>Cerrar</button>")
       $.ajax({
           type:'GET',
           url:'/Registro/'+id,
           success:function(data){
-            
+            $('#StockModal').dataTable().fnClearTable();
+            $('#StockModal').dataTable().fnDestroy();
             data.forEach(element =>{
-                $("#Tablahistorial" ).append( "<tr><td class=text-center>"+element.Ventas_del_mes+"</td> <td>"+element.fecha+"</td></tr> " );
-                
+                $("#Tablahistorial" ).append( "<tr onclick=clasificarVenta("+element.Codigo+","+element.Ventas_del_mes+","+element.fecha+")><td>"+element.Ventas_del_mes+"</td> <td>"+element.fecha+"</td></tr>" );                
             })
+            $('#StockModal').DataTable({
+              dom: 'Bfrtip',
+            buttons: [
+                'excel', 'pdf'
+        ]
+            });
+            
         }
       })
+      
     }
 
     function IngresarComentario(id,descripcion){
@@ -200,6 +210,7 @@
 
     function CambiarVariable(id){
       $('#'+id+' button').attr("disabled", true);
+      $('#'+id+' td').addClass("table-success");
       $.ajax({
         type:'DELETE',
         url:'/TransferirB/'+id,
@@ -207,7 +218,7 @@
         "_token": $("meta[name='csrf-token']").attr("content")
         },
         success:function(datos){
-          alert('Se realizo el cambio')
+          
         },
             
       })
@@ -218,9 +229,23 @@
       $.ajax({
         type:'POST',
         url:'/IngresarComentario/'+id,
-        data:{Cod:"id",Coment:"hola","_token": $("meta[name='csrf-token']").attr("content")},
+        data:{Cod:"id","_token": $("meta[name='csrf-token']").attr("content")},
         success:function(datos){
-          console.log(datos.promedio)
+          alert('todo salio bien')
+        },
+        
+      })
+    }
+
+    function clasificarVenta(id,ventas,fecha){
+      $.ajax({
+        type:'POST',
+        url:'/ClasificarVenta/',
+        data: {
+          $Codigo:"id", $venta:"ventas",$fecha:"fecha",
+        "_token": $("meta[name='csrf-token']").attr("content")
+        },
+        success:function(datos){ 
         },
         
       })

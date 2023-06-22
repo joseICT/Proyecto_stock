@@ -28,11 +28,11 @@ class StockGuardadoController extends Controller
     }
 
     //crear o actualizar comentario
-    public function EscribirComentario($Id,$COMENT){
-        if(comentario_stock_critico::where('Codigo',$Id)->exist()){
-            $Consulta=DB::update('UPDATE * FROM `comentario_stock_critico` SET `Codigo` = "'.$ID.'", `Comentario`="'.$COMENT.'"');
-        }else{
-            $Consulta=DB::insert('INSERT * FROM `comentario_stock_critico` (`Codigo`,`Comentario`) VALUES ("'.$Id.'","'.$COMENT.'")');
-        }
+    public function EscribirComentario($Id,$com){
+            $Consulta=DB::insert('INSERT * FROM `comentario_stock_critico` (`Codigo`,`Comentario`) VALUES ("'.$Id.'","'.$com.'")');
+    }
+
+    public function CambiarVentaMes($Codigo,$venta,$fecha){
+
     }
 }
