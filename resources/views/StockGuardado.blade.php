@@ -21,14 +21,15 @@
                 <th>Nombre </th>
                 <th>Marca</th>
                 <th>Familia</th>
-                <th>ultima fecha </th>
-                <th>Ventas del mes</th>
+                <th>ultima venta registrada</th>
                 <th>Media de ventas</th>
                 <th>Bodega</th>
                 <th>Comentar/Ventas/Transferir</th>                                                                                 
             </tr>
         </thead>
     <tbody>
+      <!-- filtrado de informacion a desplegar en la tabla primero el imprimir la informacion solo delos 
+      productos que existan en la tabla producto clasificar y el resto sigue la misma logica que la de stock necesario-->
     @foreach($status as $listado)
     @if(($listado->Estado)==1) 
     @foreach($datos as $lista)
@@ -48,7 +49,6 @@
         <td>{{$lista->Marca_producto}}</td>        
         <td>{{$family->taglos}}</td>
         <td>{{$lista->fecha}}</td>
-        <td>{{$lista->Ventas_del_mes}}</td>
         <td>{{$lista->Media_de_ventas}}</td>
         <td>{{$lista->Bodega}}</td>
         <td>
@@ -77,7 +77,6 @@
                 <th>Marca</th>
                 <th>Familia</th>
                 <th>Fecha</th>
-                <th>Ventas</th>
                 <th>Media</th>
                 <th>Bodega</th>
                 <th>botones</th>
@@ -87,6 +86,7 @@
 </div>
 </div>
 
+<!-- Modal de historial de ventas  -->
 <div class="modal fade" id="ModalVer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -94,17 +94,34 @@
         
       </div>
       <div class="modal-body" id="ModalContenedor">
-      <table id="StockModal" class="table table-striped table-bordered" style="width:100%">
+        <div style= "width:55%; float:left; padding: 5px">
+          <table id="StockModal" class="table table-striped table-bordered " >
       <thead>        
-        <tr>
-          <th>Ventas del mes</th>
-          <th>Fecha</th>
+        <tr >
+          <th></th>
+          <th style="width:58%">Fecha</th>
+          <th>Ventas del mes</th>          
         </tr>        
       </thead>
       <tbody id='Tablahistorial'>
 
       </tbody>
       </table>
+        </div>
+
+        <div style= "width:45%; float:left; padding: 5px">
+        <table id="StockModal2" class="table table-striped table-bordered" >
+      <thead>        
+        <tr>
+          <th style="width:56%">Fecha</th>
+          <th>Ventas del mes</th>          
+        </tr>        
+      </thead>
+      <tbody id='Tablahistorial2'>
+
+      </tbody>
+      </table>
+        </div>
       </div>
       <div class="modal-footer" id='ModalFooter'>
         
@@ -113,11 +130,12 @@
   </div>
 </div>
 
+<!-- Modal de Comentarios de producto (no cumple ninguna funcion) -->
 <div class="modal fade" id="ModalComentar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header" id='TituloDescripcion'>
-
+        
       </div>
       <div class="modal-body" id="CuerpoModal">
         <input class="form-control input-lg" type="text">
@@ -143,6 +161,8 @@
 
 
 <script>  
+
+//funcion que se ejecuta al iniciar la pagina
     $(document).ready(function () {
       $.noConflict();
     $('#StockNecesario tfoot th').each(function(){
@@ -161,18 +181,33 @@
                         }
                     });
                 });
-        },
+        },        
             dom: 'Bfrtip',
             buttons: [
-                'excel', 'pdf'
+              {
+      extend: 'excelHtml5',
+      title: 'Stock Guardado',
+      text: "Excel",
+      exportOptions: {
+        columns: [0, 1,2,3,4,5,6,7] 
+    }
+  },{
+    extend: 'pdfHtml5',
+    title: 'Stock Guardado',
+    text: "Pdf",
+    exportOptions: {
+        columns: [0, 1,2,3,4,5,6,7] 
+    }
+}
         ]
         });
+        $('#StockNecesario tfoot tr').appendTo('#StockNecesario thead');
+        $('#StockNecesario_filter label').remove();
     });
 
+    //Funcion para desplegar toda la informacion de ventas de cada mes de determinado producto
     function historial(id,detail){     
       
-      console.log(id);
-      console.log(detail);
       $("#StockModal td").remove();
       $("#TituloProducto h5").remove();
       $("#ModalFooter button").remove();
@@ -184,21 +219,33 @@
           success:function(data){
             $('#StockModal').dataTable().fnClearTable();
             $('#StockModal').dataTable().fnDestroy();
+            $('#StockModal2').dataTable().fnClearTable();
+            $('#StockModal2').dataTable().fnDestroy();
             data.forEach(element =>{
-                $("#Tablahistorial" ).append( "<tr onclick=clasificarVenta("+element.Codigo+","+element.Ventas_del_mes+","+element.fecha+")><td>"+element.Ventas_del_mes+"</td> <td>"+element.fecha+"</td></tr>" );                
+                $("#Tablahistorial" ).append( "<tr id='"+element.fecha+"'><td><button id='"+element.fecha+"' onclick=clasificarVenta('"+element.Codigo+"',"+element.Ventas_del_mes+",'"+element.fecha+"')></button></td><td>"+element.fecha+"</td> <td>"+element.Ventas_del_mes+"</td> </tr>" );                
             })
             $('#StockModal').DataTable({
+              searching: false,
               dom: 'Bfrtip',
             buttons: [
-                'excel', 'pdf'
+                
         ]
             });
-            
-        }
-      })
-      
+            $('#StockModal2').DataTable({
+              language : {
+        "zeroRecords": " "             
+    },
+              searching: false,
+              dom: 'Bfrtip',
+              buttons: [
+        ]
+            });
+           
+        }        
+      })    
     }
 
+    //funcion para depslegar los contenidos del modal comentario(no cumple ninguna funcion)
     function IngresarComentario(id,descripcion){
       $("#TituloDescripcion h5").remove();
       $("#TituloComentario button").remove();
@@ -208,6 +255,7 @@
       $("#TituloComentario").append("<button type=button class='btn btn-primary' onclick=CrearComentario(id) id="+id+">Guardar</button>");
     }
 
+    //funcion para enviar determinado producto a la vista stock necesario
     function CambiarVariable(id){
       $('#'+id+' button').attr("disabled", true);
       $('#'+id+' td').addClass("table-success");
@@ -225,6 +273,7 @@
       
     }
 
+    //funcion para crear comentario(no funciona)
     function CrearComentario(id){
       $.ajax({
         type:'POST',
@@ -237,15 +286,19 @@
       })
     }
 
+    //funcion para la interaccion entre las dos tablas de historial de ventas
     function clasificarVenta(id,ventas,fecha){
+      $('#'+fecha+' button').attr("disabled", true);
+      $("#Tablahistorial tr#"+fecha).addClass("table-success");
+      $("#Tablahistorial2" ).append( "<tr><td>"+fecha+"</td> <td>"+ventas+"</td> </tr>" );
       $.ajax({
         type:'POST',
-        url:'/ClasificarVenta/',
+        url:'/ClasificarVenta',
         data: {
-          $Codigo:"id", $venta:"ventas",$fecha:"fecha",
-        "_token": $("meta[name='csrf-token']").attr("content")
+         "Codigo":id, "venta":ventas,"fecha":fecha,"_token": $("meta[name='csrf-token']").attr("content")
         },
         success:function(datos){ 
+          console.log(datos);
         },
         
       })

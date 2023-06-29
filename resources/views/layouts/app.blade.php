@@ -34,7 +34,7 @@
                         <!--link que solo se muestran al loguearse  -->
                         <a class="navbar-brand" href="{{url('/stockperdido')}}">Stock desaparecido</a>
                         <a class="navbar-brand" href="{{url('/stocknecesario')}}">Stock necesario</a>
-                        <a class="navbar-brand" href="{{url('/stockarchivado')}}">stock guardado</a>
+                        <a class="navbar-brand" href="{{url('/stockguardado')}}">stock guardado</a>
                         @endauth
                     </ul>
 
@@ -74,7 +74,7 @@
             </div>
         </nav>
 
-        <main class="py-4">
+        <main class="py-2">
             @yield('content')
         </main>
     </div>

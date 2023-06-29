@@ -18,24 +18,28 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
-//crear las dos rutas del proyecto
+//Ruta pagina de inicio de Stock Necesario
 Route::get('/stocknecesario','StockNecesarioController@list');
-Route::get('/stocknecesario/{id}','StockNecesarioController@Search_ID');
+
+//ruta que ya no es necesaria
 Route::get('/stockperdido','StockPerdidoController@list');
 //Ruta donde muestra el hitorial de venta de determinado producto
 Route::get('/Registro/{id}','StockNecesarioController@HistorialRegistro');
-//Ruta para ingregar comentario
+
+//Ruta para ingregar comentario(no terminado)
 Route::post('/IngresarComentario/{id}','StockGuardadoController@EscribirComentario');
 
-//Ruta a la pagina de StockGuardado
-Route::get('/stockarchivado','StockGuardadoController@list');
+//Ruta a la pagina de inicio de Stock Guardado
+Route::get('/stockguardado','StockGuardadoController@list');
 
-//Ruta de cambio de variable de la vista stockNecesario
+//Ruta para enviar producto a stock guardado desde stock necesario
 Route::post('/TransferirA/{id}','StockNecesarioController@CambiarVariable');
 
-//Ruta de cambio de variable de la vista stockguardado
+//Ruta para enviar producto a stock necesario desde stock guardado
 Route::delete('/TransferirB/{id}','StockGuardadoController@BorrarVariable');
 
+//Ruta de crear requerimiento al presionar el boton
 Route::post('/GenerarOrden/{id}','StockNecesarioController@RealizarRequerimiento');
 
-Route::post('/ClasificarVenta','StockNecesarioController@RealizarRequerimiento');
+//Ruta para interaccion de las 2 tablas en el modal historial
+Route::post('/ClasificarVenta','StockGuardadoController@CambiarVentaMes');

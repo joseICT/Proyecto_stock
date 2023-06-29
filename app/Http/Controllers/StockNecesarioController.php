@@ -14,9 +14,11 @@ class StockNecesarioController extends Controller
     {
         $this->middleware('auth');
     }
-    //Se lista toda la vista completa en los que sus meses y años sea igual al actual
-    //actualizacion se modifico la vista y ahora entrega la media de ventas del año por producto
-    //Se creo otra vista para evitar borrar la anterior
+    //Todas las listas necesarias para desplegar en la vista
+    //-La lista de todos los productos cons sus ventas mensuales a lo largo de 24 meses atras
+    //-La familia del producto
+    //-La tabla donde almacenar comentarios de cada producto(No probado, por lo que no puedo asegurar que sea funcional)
+    //-Tabla donde ocupado para determinar si el producto se desplegara en stock necesario o stock guardado
     public function list(){
         $datos=DB::table('Stock_critico_2')        
         ->get();
@@ -29,25 +31,19 @@ class StockNecesarioController extends Controller
         return view('StockNecesario',compact('datos','familia','comentario','estado'));
     }
 
-    //actualizar varible para trasferir producto a stock guardado
-    public function ActualizarVariable($id){
-    }
-
-    //guardar y devolver registro de ventas de un determinado producto
+    
+    //Solicitud del historial de ventas de detreminado producto a lo largo de 24 meses al presionar un boton
     public function HistorialRegistro($id){
         $Consulta=DB::select(' SELECT 
         `dcargos`.`DECODI` AS `Codigo`,
         `producto`.`ARDESC` AS `Detalle`,
         `suma_bodega`.`cantidad` as `Bodega`,
-        ceiling((SUM(`dcargos`.`DECANT`))/3) AS `Ventas_del_mes`,
-        DATE_ADD(DATE_ADD(MAKEDATE(year(`dcargos`.`DEFECO`), 1), INTERVAL (month(`dcargos`.`DEFECO`))-1 MONTH), INTERVAL 0 DAY) AS `fecha`,
-        MAX(media_productos.Media_de_ventas) AS Media_de_ventas
+        SUM(`dcargos`.`DECANT`) AS `Ventas_del_mes`,
+        DATE_ADD(DATE_ADD(MAKEDATE(year(`dcargos`.`DEFECO`), 1), INTERVAL (month(`dcargos`.`DEFECO`))-1 MONTH), INTERVAL 0 DAY) AS `fecha`
     FROM
-        (((dcargos
+        ((dcargos
         JOIN suma_bodega)
         JOIN producto)
-        LEFT JOIN media_productos ON dcargos.DECODI = media_productos.Codigo)
-
     WHERE
         ((dcargos.DEFECO BETWEEN ((CURDATE() + INTERVAL (-(DAYOFMONTH(CURDATE())) + 1) DAY) - INTERVAL 23 MONTH) AND CURDATE())
             AND (dcargos.DECODI = suma_bodega.inarti)
@@ -59,12 +55,13 @@ class StockNecesarioController extends Controller
         return response()->json($Consulta);
     }
 
-
+    //Funcion usado para enviar un determinado producto a la vista stock guardado al prsionar un boton
     public function CambiarVariable($Id){
         $Consulta=DB::insert('INSERT INTO `producto_clasificar` (`Codigo`, `Estado`) VALUES ("'.$Id.'","1")');
 
     }
 
+    //funcion usado para realizar requerimiento de determinado producto al presionar un boton
     public function RealizarRequerimiento($Codigo){
         
         $Consulta=DB::table('producto')->where('ARCODI',$Codigo)->first();
