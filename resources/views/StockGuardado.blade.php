@@ -24,7 +24,7 @@
                 <th>ultima venta registrada</th>
                 <th>Media de ventas</th>
                 <th>Bodega</th>
-                <th>Comentar/Ventas/Transferir</th>                                                                                 
+                <th>Comentar/Ventas/Transferir/Orden</th>                                                                                 
             </tr>
         </thead>
     <tbody>
@@ -55,6 +55,7 @@
         <button class="fa fa-comment text-primary border border-light"  onclick='IngresarComentario(id,value)' value="{{$lista->Detalle}}" id="{{$lista->Codigo}}" data-target=#ModalComentar data-toggle="modal"></button>
         <button class="fa fa-list text-primary border border-light"  onclick='historial(id,value)' value="{{$lista->Detalle}}" id="{{$lista->Codigo}}" data-target=#ModalVer data-toggle="modal"></button>
         <button class="fa fa-exchange text-primary border border-light"  onclick='CambiarVariable(id)'  id="{{$lista->Codigo}}"></button>
+        <button class="fa fa-external-link-square text-primary border border-light"  onclick='GenerarOrden(id,value)'  id="{{$lista->Codigo}}" value="{{$lista->Detalle}}"></button>
         </td>                  
         </tr>
     <?php $variable=$lista->Codigo ?>    
@@ -207,20 +208,17 @@
 
     //Funcion para desplegar toda la informacion de ventas de cada mes de determinado producto
     function historial(id,detail){     
-      
       $("#StockModal td").remove();
       $("#TituloProducto h5").remove();
       $("#ModalFooter button").remove();
       $("#TituloProducto").append("<h5>"+detail+"</h5>");
-      $('#ModalFooter').append("<button type=button class='btn btn-primary' onclick=BorrarFiltro("+id+")>Reiniciar</button> <button type=button class='btn btn-secondary' data-dismiss=modal>Cerrar</button>")
+      $('#ModalFooter').append("<button class='btn btn-primary' onclick=BorrarFiltro('"+id+"')>Reiniciar</button> <button type=button class='btn btn-secondary' data-dismiss=modal>Cerrar</button>")
       $.ajax({
           type:'GET',
           url:'/Registro/'+id,
           success:function(data){
             $('#StockModal').dataTable().fnClearTable();
             $('#StockModal').dataTable().fnDestroy();
-            $('#StockModal2').dataTable().fnClearTable();
-            $('#StockModal2').dataTable().fnDestroy();
             data.forEach(element =>{
                 $("#Tablahistorial" ).append( "<tr id='"+element.fecha+"'><td><button id='"+element.fecha+"' onclick=clasificarVenta('"+element.Codigo+"',"+element.Ventas_del_mes+",'"+element.fecha+"')></button></td><td>"+element.fecha+"</td> <td>"+element.Ventas_del_mes+"</td> </tr>" );                
             })
@@ -231,18 +229,28 @@
                 
         ]
             });
-            $('#StockModal2').DataTable({
-              language : {
-        "zeroRecords": " "             
-    },
+           
+        }        
+      })
+      
+      $.ajax({
+        type:'GET',
+          url:'/RegistroB/'+id,
+          success:function(data){
+            $('#StockModal2').dataTable().fnClearTable();
+            $('#StockModal2').dataTable().fnDestroy();
+            data.forEach(element =>{
+                $("#Tablahistorial2" ).append("<tr id='"+element.Fecha+"'><td>"+element.Fecha+"</td> <td>"+element.Venta+"</td> </tr>" );
+            })
+            $('#StockModal2').DataTable({              
               searching: false,
               dom: 'Bfrtip',
               buttons: [
         ]
             });
-           
-        }        
-      })    
+          }
+          
+      })
     }
 
     //funcion para depslegar los contenidos del modal comentario(no cumple ninguna funcion)
@@ -303,5 +311,33 @@
         
       })
     }
-</script>
+
+    //funcion para realizar un requerimiento de determinado producto
+    function GenerarOrden(id,value){
+      $.ajax({
+        type:'POST',
+        url:'/GenerarOrden/'+id,
+        data:{
+          "_token": $("meta[name='csrf-token']").attr("content")
+        },
+        success:function(datos){
+        },
+      })
+      alert("REQUERIMIENTO CREADO PARA EL PRODUCTO: "+value);
+    }
+
+    function BorrarFiltro(id){
+      $("#Tablahistorial2 tr").remove();
+      $.ajax({
+        type:'DELETE',
+        url:'/eliminartabla/'+id,
+        data: {
+        "_token": $("meta[name='csrf-token']").attr("content")
+        },
+        success:function(datos){
+          alert('tabla restablecida')
+        },
+      })
+    }
+</script> 
 @endsection

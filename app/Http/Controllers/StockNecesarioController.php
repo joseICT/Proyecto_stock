@@ -18,7 +18,7 @@ class StockNecesarioController extends Controller
     //-La lista de todos los productos cons sus ventas mensuales a lo largo de 24 meses atras
     //-La familia del producto
     //-La tabla donde almacenar comentarios de cada producto(No probado, por lo que no puedo asegurar que sea funcional)
-    //-Tabla donde ocupado para determinar si el producto se desplegara en stock necesario o stock guardado
+    //-Tabla que se encarga en determinar si el producto se desplegara en stock necesario o stock guardado
     public function list(){
         $datos=DB::table('Stock_critico_2')        
         ->get();
@@ -55,6 +55,14 @@ class StockNecesarioController extends Controller
         return response()->json($Consulta);
     }
 
+    //Funcion para desplegar datos de la segunda tabla
+    public function HistorialRegistro2($id){
+        $Consulta=DB::table('ventas_clasificar')
+        ->where('Codigo','=',$id)
+        ->get();
+        return response()->json($Consulta);
+    }
+
     //Funcion usado para enviar un determinado producto a la vista stock guardado al prsionar un boton
     public function CambiarVariable($Id){
         $Consulta=DB::insert('INSERT INTO `producto_clasificar` (`Codigo`, `Estado`) VALUES ("'.$Id.'","1")');
@@ -68,5 +76,13 @@ class StockNecesarioController extends Controller
         
         $Consul=DB::insert('INSERT INTO `requerimiento_compra` (`codigo`,`descripcion`,`marca`,`cantidad`,`depto`,`estado`,`observacion_interna`)
          VALUES ("'.$Codigo.'","'.$Consulta->ARDESC.'","'.$Consulta->ARMARCA.'","1","Stock Critico","INGRESADO","Stock Critico")');
+    }
+
+    //funcion para borrar contenido de la tabla 2 del historial de venta de producto
+
+    public function Borrartabla($id){
+        DB::table('ventas_clasificar')
+        ->where('Codigo','=',$id)
+        ->delete();
     }
 }

@@ -13,11 +13,12 @@ class StockGuardadoController extends Controller
     //-La lista de todos los productos cons sus ventas mensuales a lo largo de 24 meses atras
     //-La familia del producto
     //-La tabla donde almacenar comentarios de cada producto(No probado, por lo que no puedo asegurar que sea funcional)
-    //-Tabla donde ocupado para determinar si el producto se desplegara en stock necesario o stock guardado
+    //-Tabla que se encarga en determinar si el producto se desplegara en stock necesario o stock guardado
+    //-Tabla que almacenda los datos filtrados a la segunda tabla de historial de ventas de determinado producto
     public function list(){
         $datos=DB::table('Stock_critico_2')        
         ->get();
-        $familia=DB::table('vv_tablas22') 
+        $familia=DB::table('vv_tablas22')
         ->get();
         $comentario=DB::table('comentario_stock_critico')
         ->get();

@@ -43,3 +43,9 @@ Route::post('/GenerarOrden/{id}','StockNecesarioController@RealizarRequerimiento
 
 //Ruta para interaccion de las 2 tablas en el modal historial
 Route::post('/ClasificarVenta','StockGuardadoController@CambiarVentaMes');
+
+//Ruta para despelgar datos de la segunda tabla de historial de ventas
+Route::get('/RegistroB/{id}','StockNecesarioController@HistorialRegistro2');
+
+//ruta para eliminar todo contenido de la segunda tabla
+Route::delete('eliminartabla/{id}','StockNecesarioController@Borrartabla');
